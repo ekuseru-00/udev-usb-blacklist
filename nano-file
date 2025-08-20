@@ -1,5 +1,8 @@
-#Prevent driver binding
-SUBSYSTEM=="usb", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="161a", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{MTP_NO_PROBE}="1"
+# Primary protection: Deauthorize the USB device completely
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="161a", ATTR{authorized}="0"
 
-#Additional rule to unbind if already bound
-ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="161a", RUN+="/bin/sh -c 'echo $kernel > /sys/bus/usb/drivers/usbhid/unbind'"
+# Prevent service interference and driver binding
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="161a", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{MTP_NO_PROBE}="1", ENV{ID_INPUT}="", ENV{ID_INPUT_MOUSE}="", ENV{ID_INPUT_KEYBOARD}="", ENV{ID_INPUT_JOYSTICK}=""
+
+# Safety net: unbind from any driver that might have claimed it
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="161a", RUN+="/bin/sh -c 'find /sys/bus/usb/drivers -name $kernel -exec dirname {} \\\\; 2>/dev/null | xargs -I {} sh -c \\"echo $kernel > {}/unbind\\" 2>/dev/null || true'"
