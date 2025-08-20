@@ -20,13 +20,9 @@ nano /boot/config/udev/rules.d/99-usb-vm-blacklist.rules
 Change the vendor id "1038" and product id "161a" to your device's id's.
 
 You can more lines,  if you want to blacklist more USB devices.
-```
-#Prevent driver binding
-SUBSYSTEM=="usb", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="161a", ENV{ID_MM_DEVICE_IGNORE}="1", ENV{MTP_NO_PROBE}="1"
 
-#Additional rule to unbind if already bound
-ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="1038", ATTRS{idProduct}=="161a", RUN+="/bin/sh -c 'echo $kernel > /sys/bus/usb/drivers/usbhid/unbind'"
-```
+* [See udev nano rules here](https://github.com/ekuseru-00/udev-usb-blacklist/blob/main/nano-file)
+
 # Reload the udev rules to make them active
 ```
 #bash
